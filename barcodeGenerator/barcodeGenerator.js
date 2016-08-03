@@ -1,27 +1,95 @@
 angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function() {
-    var Barcode	= (function () {
-        var barcode	= {
+    var Barcode = (function () {
+        var barcode = {
             settings: {
-                barWidth:		1,
-                barHeight:		50,
-                moduleSize:		5,
-                showHRI:		false,
-                addQuietZone:	true,
-                marginHRI:		5,
-                bgColor:		"#FFFFFF",
-                color:			"#000000",
-                fontSize:		10,
-                posX:			0,
-                posY:			0
+                barWidth:       1,
+                barHeight:      50,
+                moduleSize:     5,
+                showHRI:        false,
+                addQuietZone:   true,
+                marginHRI:      5,
+                bgColor:        "#FFFFFF",
+                color:          "#000000",
+                fontSize:       10,
+                posX:           0,
+                posY:           0
             },
             intval: function(val) {
-                var type	= typeof(val);
+                var type    = typeof(val);
                 if ( type == 'string' ) {
                     val = val.replace(/[^0-9-.]/g, "");
                     val = parseInt(val * 1, 10);
                     return isNaN(val) || !isFinite(val)? 0: val;
                 }
                 return type == 'number' && isFinite(val)? Math.floor(val): 0;
+            },
+            i25: { // std25 int25
+              encoding: ["NNWWN", "WNNNW", "NWNNW", "WWNNN", "NNWNW", "WNWNN", "NWWNN", "NNNWW", "WNNWN","NWNWN"],
+              compute: function(code, crc, type){
+                if (! crc) {
+                  if (code.length % 2 != 0) code = '0' + code;
+                } else {
+                  if ( (type == "int25") && (code.length % 2 == 0) ) code = '0' + code;
+                  var odd = true, v, sum = 0;
+                  for(var i=code.length-1; i>-1; i--){
+                    v = barcode.intval(code.charAt(i));
+                    if (isNaN(v)) return("");
+                    sum += odd ? 3 * v : v;
+                    odd = ! odd;
+                  }
+                  code += ((10 - sum % 10) % 10).toString();
+                }
+                return(code);
+              },
+              getDigit: function(code, crc, type){
+                code = this.compute(code, crc, type);
+                if (code == "") return("");
+                result = "";
+
+                var i, j;
+                if (type == "int25") {
+                  // Interleaved 2 of 5
+
+                  // start
+                  result += "1010";
+
+                  // digits + CRC
+                  var c1, c2;
+                  for(i=0; i<code.length / 2; i++){
+                    c1 = code.charAt(2*i);
+                    c2 = code.charAt(2*i+1);
+                    for(j=0; j<5; j++){
+                      result += '1';
+                      if (this.encoding[c1].charAt(j) == 'W') result += '1';
+                      result += '0';
+                      if (this.encoding[c2].charAt(j) == 'W') result += '0';
+                    }
+                  }
+                  // stop
+                  result += "1101";
+                } else if (type == "std25") {
+                  // Standard 2 of 5 is a numeric-only barcode that has been in use a long time.
+                  // Unlike Interleaved 2 of 5, all of the information is encoded in the bars; the spaces are fixed width and are used only to separate the bars.
+                  // The code is self-checking and does not include a checksum.
+
+                  // start
+                  result += "11011010";
+
+                  // digits + CRC
+                  var c;
+                  for(i=0; i<code.length; i++){
+                    c = code.charAt(i);
+                    for(j=0; j<5; j++){
+                      result += '1';
+                      if (this.encoding[c].charAt(j) == 'W') result += "11";
+                      result += '0';
+                    }
+                  }
+                  // stop
+                  result += "11010110";
+                }
+                return(result);
+              }
             },
             code128: {
                 encoding:[
@@ -54,13 +122,13 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                     "11010010000", "11010011100", "11000111010"
                 ],
                 getDigit: function(code) {
-                    var tableB	= " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-                    var result	= "";
-                    var sum		= 0;
-                    var isum	= 0;
-                    var i		= 0;
-                    var j		= 0;
-                    var value	= 0;
+                    var tableB  = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+                    var result  = "";
+                    var sum     = 0;
+                    var isum    = 0;
+                    var i       = 0;
+                    var j       = 0;
+                    var value   = 0;
 
                     // check each characters
                     for(i=0; i<code.length; i++){
@@ -78,7 +146,7 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                         tableCActivated &= c >= '0' && c <= '9';
                     }
 
-                    sum	= tableCActivated ? 105 : 104;
+                    sum = tableCActivated ? 105 : 104;
 
                     // start : [105] : C table or [104] : B table
                     result = this.encoding[ sum ];
@@ -98,7 +166,7 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                             if ( tableCActivated ){
                                 result += this.encoding[ 99 ]; // C table
                                 sum += ++isum * 99;
-                            } //		 2 min for table C so need table B
+                            } //         2 min for table C so need table B
                         } else if ( (i == code.length) || (code.charAt(i) < '0') || (code.charAt(i) > '9') || (code.charAt(i+1) < '0') || (code.charAt(i+1) > '9') ) {
                             tableCActivated = false;
                             result += this.encoding[ 100 ]; // B table
@@ -112,7 +180,7 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                             value = tableB.indexOf( code.charAt(i) ); // Add one character
                             i += 1;
                         }
-                        result	+= this.encoding[ value ];
+                        result  += this.encoding[ value ];
                         sum += ++isum * value;
                     }
 
@@ -176,22 +244,22 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
             }
         };
 
-        var generate	= function(datas, type, settings) {
+        var generate    = function(datas, type, settings) {
             var
-                digit	= "",
-                hri		= "",
-                code	= "",
-                crc		= true,
-                rect	= false,
-                b2d		= false
+                digit   = "",
+                hri     = "",
+                code    = "",
+                crc     = true,
+                rect    = false,
+                b2d     = false
                 ;
 
             if ( typeof(datas) == "string") {
                 code = datas;
             } else if (typeof(datas) == "object") {
-                code	= typeof(datas.code) == "string" ? datas.code : "";
-                crc		= typeof(datas.crc) != "undefined" ? datas.crc : true;
-                rect	= typeof(datas.rect) != "undefined" ? datas.rect : false;
+                code    = typeof(datas.code) == "string" ? datas.code : "";
+                crc     = typeof(datas.crc) != "undefined" ? datas.crc : true;
+                rect    = typeof(datas.rect) != "undefined" ? datas.rect : false;
             }
 
             if (code == "") {
@@ -227,8 +295,8 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                     break;
                 }
                 case "code11": {
-                    digit	= barcode.code11.getDigit(code);
-                    hri	= code;
+                    digit   = barcode.code11.getDigit(code);
+                    hri = code;
                     break;
                 }
                 case "code39": {
@@ -283,8 +351,9 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
     return {
         link: function(scope, element, attrs) {
             attrs.$observe('barcodeGenerator', function(value){
-                var code = Barcode(value, "code128",{barWidth:2}),
-                    code_wrapper = angular.element("<div class='barcode code128'></div>")
+
+                var code = Barcode(value, attrs['codetype'],{barWidth:2}),
+                code_wrapper = angular.element("<div class='barcode "+attrs['codetype']+"'></div>")
 
                 code_wrapper.append(code);
                 angular.element(element).html('').append(code_wrapper);

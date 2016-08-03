@@ -5,7 +5,7 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                 barWidth:       1,
                 barHeight:      50,
                 moduleSize:     5,
-                showHRI:        false,
+                showHRI:        true,
                 addQuietZone:   true,
                 marginHRI:      5,
                 bgColor:        "#FFFFFF",
@@ -29,17 +29,17 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                 if (! crc) {
                   if (code.length % 2 != 0) code = '0' + code;
                 } else {
-                  if ( (type == "int25") && (code.length % 2 == 0) ) code = '0' + code;
-                  var odd = true, v, sum = 0;
-                  for(var i=code.length-1; i>-1; i--){
-                    v = barcode.intval(code.charAt(i));
-                    if (isNaN(v)) return("");
-                    sum += odd ? 3 * v : v;
-                    odd = ! odd;
-                  }
-                  code += ((10 - sum % 10) % 10).toString();
+                  // if ( (type == "int25") && (code.length % 2 == 0) ) code = '0' + code;
+                  // var odd = true, v, sum = 0;
+                  // for(var i=code.length-1; i>-1; i--){
+                  //   v = barcode.intval(code.charAt(i));
+                  //   if (isNaN(v)) return("");
+                  //   sum += odd ? 3 * v : v;
+                  //   odd = ! odd;
+                  // }
+                  // code += ((10 - sum % 10) % 10).toString();
                 }
-                return(code);
+                return(code.toString());
               },
               getDigit: function(code, crc, type){
                 code = this.compute(code, crc, type);
@@ -280,7 +280,9 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                 case "std25":
                 case "int25": {
                     digit = barcode.i25.getDigit(code, crc, type);
+                    console.log("digit int25: "+ digit);
                     hri = barcode.i25.compute(code, crc, type);
+                    console.log("hri int25: "+ hri);
                     break;
                 }
                 case "ean8":
@@ -357,7 +359,7 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                     attrs['codetype'] = 'code128';
                 }
 
-                var code = Barcode(value, codetype,{barWidth:2}),
+                var code = Barcode(value, codetype,{barWidth:3}),
                 code_wrapper = angular.element("<div class='barcode "+codetype+"'></div>")
 
                 code_wrapper.append(code);

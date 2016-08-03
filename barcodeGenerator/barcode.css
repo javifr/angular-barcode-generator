@@ -76,3 +76,85 @@
 .barcode.code128 .b10 {
     width: 10px;
 }
+
+
+.barcode.int25 {
+    float: left;
+    height: 100%;
+    min-height: 10px;
+}
+.barcode.int25 > div.b {
+    background: none repeat scroll 0 0 #000000;
+    float: left;
+    height: 100%;
+}
+.barcode.int25 > div.w {
+    background: none repeat scroll 0 0 #FFFFFF;
+    float: left;
+    height: 100%;
+}
+.barcode.int25 .w20 {
+    width: 20px;
+}
+.barcode.int25 .w1 {
+    width: 1px;
+}
+.barcode.int25 .w2 {
+    width: 2px;
+}
+.barcode.int25 .w3 {
+    width: 3px;
+}
+.barcode.int25 .w4 {
+    width: 4px;
+}
+.barcode.int25 .w5 {
+    width: 5px;
+}
+.barcode.int25 .w6 {
+    width: 6px;
+}
+.barcode.int25 .w7 {
+    width: 7px;
+}
+.barcode.int25 .w8 {
+    width: 8px;
+}
+.barcode.int25 .w9 {
+    width: 9px;
+}
+.barcode.int25 .w10 {
+    width: 10px;
+}
+.barcode.int25 .b1 {
+    width: 1px;
+}
+.barcode.int25 .b2 {
+    width: 2px;
+}
+.barcode.int25 .b3 {
+    width: 3px;
+}
+.barcode.int25 .b4 {
+    width: 4px;
+}
+.barcode.int25 .b5 {
+    width: 5px;
+}
+.barcode.int25 .b6 {
+    width: 6px;
+}
+.barcode.int25 .b7 {
+    width: 7px;
+}
+.barcode.int25 .b8 {
+    width: 8px;
+}
+.barcode.int25 .b9 {
+    width: 9px;
+}
+.barcode.int25 .b10 {
+    width: 10px;
+}
+
+

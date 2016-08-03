@@ -352,8 +352,13 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
         link: function(scope, element, attrs) {
             attrs.$observe('barcodeGenerator', function(value){
 
-                var code = Barcode(value, attrs['codetype'],{barWidth:2}),
-                code_wrapper = angular.element("<div class='barcode "+attrs['codetype']+"'></div>")
+                var codetype = attrs['codetype'];
+                if( attrs['codetype'] == undefined ) {
+                    attrs['codetype'] = 'code128';
+                }
+
+                var code = Barcode(value, codetype,{barWidth:2}),
+                code_wrapper = angular.element("<div class='barcode "+codetype+"'></div>")
 
                 code_wrapper.append(code);
                 angular.element(element).html('').append(code_wrapper);

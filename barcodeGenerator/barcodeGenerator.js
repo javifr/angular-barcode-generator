@@ -205,17 +205,19 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
               first:  ["000000","001011","001101","001110","010011","011001","011100","010101","010110","011010"],
               getDigit: function(code, type){
                 // Check len (12 for ean13, 7 for ean8)
-                var len = type == "ean8" ? 7 : 12;
-                code = code.substring(0, len);
-                if (code.length != len) return("");
-                // Check each digit is numeric
-                var c;
-                for(var i=0; i<code.length; i++){
-                  c = code.charAt(i);
-                  if ( (c < '0') || (c > '9') ) return("");
-                }
+                var len = type == "ean8" ? 8 : 13;
+                // code = code.substring(0, len);
+                // if (code.length != len) return("");
+                // // Check each digit is numeric
+                // var c;
+                // for(var i=0; i<code.length; i++){
+                //   c = code.charAt(i);
+                //   if ( (c < '0') || (c > '9') ) return("");
+                // }
                 // get checksum
                 code = this.compute(code, type);
+
+                console.log("BARCODE A CODIFICAR :"+code);
 
                 // process analyse
                 var result = "101"; // start
@@ -257,14 +259,14 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                 return(result);
               },
               compute: function (code, type){
-                var len = type == "ean13" ? 12 : 7;
-                code = code.substring(0, len);
-                var sum = 0, odd = true;
-                for(i=code.length-1; i>-1; i--){
-                  sum += (odd ? 3 : 1) * barcode.intval(code.charAt(i));
-                  odd = ! odd;
-                }
-                return(code + ((10 - sum % 10) % 10).toString());
+                var len = type == "ean13" ? 13 : 7;
+                //code = code.substring(0, len);
+                //var sum = 0, odd = true;
+                // for(i=code.length-1; i>-1; i--){
+                //   sum += (odd ? 3 : 1) * barcode.intval(code.charAt(i));
+                //   odd = ! odd;
+                // }
+                return(code.toString());
               }
             },
             bitStringTo2DArray: function( digit) {//convert a bit string to an array of array of bit char

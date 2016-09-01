@@ -158,3 +158,84 @@
 }
 
 
+/* Ean */
+
+.barcode.ean13 {
+    float: left;
+    height: 100%;
+    min-height: 10px;
+}
+.barcode.ean13 > div.b {
+    background: none repeat scroll 0 0 #000000;
+    float: left;
+    height: 100%;
+}
+.barcode.ean13 > div.w {
+    background: none repeat scroll 0 0 #FFFFFF;
+    float: left;
+    height: 100%;
+}
+.barcode.ean13 .w20 {
+    width: 20px;
+}
+.barcode.ean13 .w1 {
+    width: 1px;
+}
+.barcode.ean13 .w2 {
+    width: 2px;
+}
+.barcode.ean13 .w3 {
+    width: 3px;
+}
+.barcode.ean13 .w4 {
+    width: 4px;
+}
+.barcode.ean13 .w5 {
+    width: 5px;
+}
+.barcode.ean13 .w6 {
+    width: 6px;
+}
+.barcode.ean13 .w7 {
+    width: 7px;
+}
+.barcode.ean13 .w8 {
+    width: 8px;
+}
+.barcode.ean13 .w9 {
+    width: 9px;
+}
+.barcode.ean13 .w10 {
+    width: 10px;
+}
+.barcode.ean13 .b1 {
+    width: 1px;
+}
+.barcode.ean13 .b2 {
+    width: 2px;
+}
+.barcode.ean13 .b3 {
+    width: 3px;
+}
+.barcode.ean13 .b4 {
+    width: 4px;
+}
+.barcode.ean13 .b5 {
+    width: 5px;
+}
+.barcode.ean13 .b6 {
+    width: 6px;
+}
+.barcode.ean13 .b7 {
+    width: 7px;
+}
+.barcode.ean13 .b8 {
+    width: 8px;
+}
+.barcode.ean13 .b9 {
+    width: 9px;
+}
+.barcode.ean13 .b10 {
+    width: 10px;
+}
+

@@ -217,7 +217,7 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                 // get checksum
                 code = this.compute(code, type);
 
-                console.log("BARCODE A CODIFICAR :"+code);
+                // console.log("BARCODE A CODIFICAR :"+code);
 
                 // process analyse
                 var result = "101"; // start
@@ -358,9 +358,9 @@ angular.module('barcodeGenerator', []).directive('barcodeGenerator', [function()
                 case "std25":
                 case "int25": {
                     digit = barcode.i25.getDigit(code, crc, type);
-                    console.log("digit int25: "+ digit);
+                    // console.log("digit int25: "+ digit);
                     hri = barcode.i25.compute(code, crc, type);
-                    console.log("hri int25: "+ hri);
+                    // console.log("hri int25: "+ hri);
                     break;
                 }
                 case "ean8":
